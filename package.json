@@ -1,0 +1,19 @@
+{
+  "name": "hsimosoftware_website",
+  "version": "1.0.0",
+  "description": "Website for HSIMO Software, LLC",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HSIMOSoftware/HSIMOSoftware.github.io.git"
+  },
+  "author": "Seth J. Moore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HSIMOSoftware/HSIMOSoftware.github.io/issues"
+  },
+  "homepage": "https://github.com/HSIMOSoftware/HSIMOSoftware.github.io#readme"
+}
