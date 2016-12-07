@@ -4,7 +4,8 @@
   "description": "Website for HSIMO Software, LLC",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "jekyll serve"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/HSIMOSoftware/HSIMOSoftware.github.io/issues"
   },
-  "homepage": "https://github.com/HSIMOSoftware/HSIMOSoftware.github.io#readme"
+  "homepage": "https://github.com/HSIMOSoftware/HSIMOSoftware.github.io#readme",
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "jekyll": "^3.0.0-beta1"
+  }
 }
