@@ -3,11 +3,19 @@ import {run} from '@cycle/xstream-run';
 import {header, h1, h2, makeDOMDriver} from '@cycle/dom';
 
 function intent(domSource) {
+  const revealAcronym$ = xs.merge(
+    domSource.select('.name').events('mouseover').mapTo(true),
+    domSource.select('.name').events('touchenter').mapTo(true)
+    );
+
+  const hideAcronym$ = xs.merge(
+    domSource.select('.name').events('mouseout').mapTo(true),
+    domSource.select('.name').events('touchleave').mapTo(true)
+    );
+
   return {
-    revealAcronym$: domSource.select('.name').events('mouseover')
-      .mapTo(true),
-    hideAcronym$: domSource.select('.name').events('mouseout')
-      .mapTo(true)
+    revealAcronym$: revealAcronym$,
+    hideAcronym$: hideAcronym$
   }
 }
 

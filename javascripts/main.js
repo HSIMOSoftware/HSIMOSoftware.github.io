@@ -8377,9 +8377,13 @@ var _dom = require('@cycle/dom');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function intent(domSource) {
+  var revealAcronym$ = _xstream2.default.merge(domSource.select('.name').events('mouseover').mapTo(true), domSource.select('.name').events('touchenter').mapTo(true));
+
+  var hideAcronym$ = _xstream2.default.merge(domSource.select('.name').events('mouseout').mapTo(true), domSource.select('.name').events('touchleave').mapTo(true));
+
   return {
-    revealAcronym$: domSource.select('.name').events('mouseover').mapTo(true),
-    hideAcronym$: domSource.select('.name').events('mouseout').mapTo(true)
+    revealAcronym$: revealAcronym$,
+    hideAcronym$: hideAcronym$
   };
 }
 
