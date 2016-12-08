@@ -1,6 +1,6 @@
 import xs from 'xstream';
 import {run} from '@cycle/xstream-run';
-import {header, h1, h2, makeDOMDriver} from '@cycle/dom';
+import {header, h1, h2, span, makeDOMDriver} from '@cycle/dom';
 
 function intent(domSource) {
   const revealAcronym$ = xs.merge(
@@ -27,8 +27,7 @@ function model(actions) {
 
   return acronymVisible$.map(v => {
     return {
-      name: 'HSIMO Software, LLC',
-      acronym: v ? 'Highly Specific Infomation Modification and Organization' : ''
+      acronym: v ? 'Highly Specific Information Modification and Organization' : ''
     }
   });
 }
@@ -36,7 +35,7 @@ function model(actions) {
 function view(state$) {
   return state$.map(({name, acronym}) =>
     header([
-      h1('.name', name),
+      h1([span('.name', 'HSIMO'), ' Software, LLC']),
       h2(acronym)
     ])
   );
