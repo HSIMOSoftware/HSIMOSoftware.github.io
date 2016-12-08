@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "browserify": "browserify src/main.js --outfile javascripts/main.js -t [ babelify --presets [es2015] ]",
-    "start": "npm install && npm run browserify && jekyll serve"
+    "watchify": "watchify src/main.js --outfile javascripts/main.js -t [ babelify --presets [es2015] ]",
+    "build": "npm install && npm run browserify && jekyll build",
+    "start": "npm install && npm run watchify & jekyll serve"
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,7 @@
   "dependencies": {
     "@cycle/dom": "^14.2.0",
     "@cycle/xstream-run": "^4.1.0",
+    "watchify": "^3.7.0",
     "xstream": "^9.0.0"
   }
 }
