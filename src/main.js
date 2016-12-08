@@ -5,12 +5,12 @@ import {header, h1, h2, makeDOMDriver} from '@cycle/dom';
 function intent(domSource) {
   const revealAcronym$ = xs.merge(
     domSource.select('.name').events('mouseover').mapTo(true),
-    domSource.select('.name').events('touchenter').mapTo(true)
+    domSource.select('.name').events('touchstart').mapTo(true)
     );
 
   const hideAcronym$ = xs.merge(
     domSource.select('.name').events('mouseout').mapTo(true),
-    domSource.select('.name').events('touchleave').mapTo(true)
+    domSource.select('.name').events('touchend').mapTo(true)
     );
 
   return {
