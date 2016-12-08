@@ -8366,22 +8366,46 @@ exports.default = core_1.Stream;
 },{"./core":122}],124:[function(require,module,exports){
 'use strict';
 
+var _xstream = require('xstream');
+
+var _xstream2 = _interopRequireDefault(_xstream);
+
 var _xstreamRun = require('@cycle/xstream-run');
 
 var _dom = require('@cycle/dom');
 
-function main(sources) {
-  var sinks = {
-    DOM: sources.DOM.select('.name').events('mouseover').map(function () {
-      return "Highly Specific Infomation Modification and Organization";
-    }).startWith('').map(function (name) {
-      return (0, _dom.header)([(0, _dom.h1)('.name', 'HSIMO Software, LLC'), (0, _dom.h2)(name)]);
-    })
-  };
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-  return sinks;
+function intent(domSource) {
+  return {
+    revealAcronym$: domSource.select('.name').events('mouseover').mapTo(true),
+    hideAcronym$: domSource.select('.name').events('mouseout').mapTo(true)
+  };
+}
+
+function model(actions) {
+  var acronymVisible$ = _xstream2.default.merge(actions.revealAcronym$, actions.hideAcronym$.mapTo(false)).startWith(false);
+
+  return acronymVisible$.map(function (v) {
+    return {
+      name: 'HSIMO Software, LLC',
+      acronym: v ? 'Highly Specific Infomation Modification and Organization' : ''
+    };
+  });
+}
+
+function view(state$) {
+  return state$.map(function (_ref) {
+    var name = _ref.name,
+        acronym = _ref.acronym;
+    return (0, _dom.header)([(0, _dom.h1)('.name', name), (0, _dom.h2)(acronym)]);
+  });
+}
+
+function main(sources) {
+  return { DOM: view(model(intent(sources.DOM))) };
 }
 
 (0, _xstreamRun.run)(main, { DOM: (0, _dom.makeDOMDriver)('#experiment') });
 
-},{"@cycle/dom":13,"@cycle/xstream-run":23}]},{},[124]);
+},{"@cycle/dom":13,"@cycle/xstream-run":23,"xstream":123}]},{},[124]);
