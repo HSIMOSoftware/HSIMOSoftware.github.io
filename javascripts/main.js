@@ -8376,23 +8376,37 @@ var _dom = require('@cycle/dom');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function intent(domSource) {
-  var revealAcronym$ = _xstream2.default.merge(domSource.select('.name').events('mouseover').mapTo(true), domSource.select('.name').events('touchstart').mapTo(true));
+function closeToCenter(ev) {
+  var clientRect = ev.currentTarget.getBoundingClientRect();
+  var center = (clientRect.right - clientRect.left) / 2;
+  var position = ev.clientX - clientRect.left;
+  var distanceFromCenter = Math.abs(center - position);
+  var halfWidth = clientRect.width / 2;
+  var distanceTowardCenter = halfWidth - distanceFromCenter;
+  var howClose = distanceTowardCenter / halfWidth;
+  return howClose;
+}
 
-  var hideAcronym$ = _xstream2.default.merge(domSource.select('.name').events('mouseout').mapTo(true), domSource.select('.name').events('touchend').mapTo(true));
+function selectAcronym(accuracy) {
+  var potentialAcronyms = ['', 'Hello, Someone Is Missing Olives', 'Hug Successful, Intelligent, Magnanimous Others', 'Handsome Sailors Imagine Miraculous Oilskins', 'Help Scream Incoherent Medical Oaths', 'Highly Specific Information Modification and Organization', 'Highly Specific Information Modification and Organization', 'Highly Specific Information Modification and Organization'];
+  return potentialAcronyms[Math.round(accuracy * (potentialAcronyms.length - 1))];
+}
+
+function intent(domSource) {
+  var fullName = domSource.select('.name');
+  var revealAcronym$ = _xstream2.default.merge(fullName.events('mousemove').map(closeToCenter), fullName.events('touchstart').mapTo(1.0), fullName.events('mouseout').mapTo(0.0), fullName.events('touchend').mapTo(0.0)).startWith(0.0);
 
   return {
-    revealAcronym$: revealAcronym$,
-    hideAcronym$: hideAcronym$
+    revealAcronym$: revealAcronym$
   };
 }
 
 function model(actions) {
-  var acronymVisible$ = _xstream2.default.merge(actions.revealAcronym$, actions.hideAcronym$.mapTo(false)).startWith(false);
+  var acronym$ = actions.revealAcronym$.map(selectAcronym);
 
-  return acronymVisible$.map(function (v) {
+  return acronym$.map(function (a) {
     return {
-      acronym: v ? 'Highly Specific Information Modification and Organization' : ''
+      acronym: a
     };
   });
 }
