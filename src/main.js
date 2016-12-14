@@ -1,6 +1,6 @@
 import xs from 'xstream';
 import {run} from '@cycle/xstream-run';
-import {header, h1, h2, span, makeDOMDriver} from '@cycle/dom';
+import {abbr, header, h1, h2, makeDOMDriver} from '@cycle/dom';
 
 function closeToCenter(ev) {
   const clientRect = ev.currentTarget.getBoundingClientRect();
@@ -54,7 +54,7 @@ function model(actions) {
 function view(state$) {
   return state$.map(({name, acronym}) =>
     header([
-      h1([span('.name', 'HSIMO'), ' Software, LLC']),
+      h1([abbr('.name', {attrs: {title: acronym}}, 'HSIMO'), ' Software, LLC']),
       h2(acronym)
     ])
   );

@@ -8415,7 +8415,7 @@ function view(state$) {
   return state$.map(function (_ref) {
     var name = _ref.name,
         acronym = _ref.acronym;
-    return (0, _dom.header)([(0, _dom.h1)([(0, _dom.span)('.name', 'HSIMO'), ' Software, LLC']), (0, _dom.h2)(acronym)]);
+    return (0, _dom.header)([(0, _dom.h1)([(0, _dom.abbr)('.name', { attrs: { title: acronym } }, 'HSIMO'), ' Software, LLC']), (0, _dom.h2)(acronym)]);
   });
 }
 
