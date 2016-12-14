@@ -169,7 +169,7 @@ var BodyDOMSource = (function () {
 }());
 exports.BodyDOMSource = BodyDOMSource;
 
-},{"./fromEvent":10,"@cycle/xstream-adapter":22,"xstream":123}],3:[function(require,module,exports){
+},{"./fromEvent":10,"@cycle/xstream-adapter":22,"xstream":124}],3:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
@@ -206,7 +206,7 @@ var DocumentDOMSource = (function () {
 }());
 exports.DocumentDOMSource = DocumentDOMSource;
 
-},{"./fromEvent":10,"@cycle/xstream-adapter":22,"xstream":123}],4:[function(require,module,exports){
+},{"./fromEvent":10,"@cycle/xstream-adapter":22,"xstream":124}],4:[function(require,module,exports){
 "use strict";
 var ScopeChecker_1 = require('./ScopeChecker');
 var utils_1 = require('./utils');
@@ -412,7 +412,7 @@ var HTMLSource = (function () {
 }());
 exports.HTMLSource = HTMLSource;
 
-},{"@cycle/xstream-adapter":22,"xstream":123}],7:[function(require,module,exports){
+},{"@cycle/xstream-adapter":22,"xstream":124}],7:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var DocumentDOMSource_1 = require('./DocumentDOMSource');
@@ -615,7 +615,7 @@ var MainDOMSource = (function () {
 }());
 exports.MainDOMSource = MainDOMSource;
 
-},{"./BodyDOMSource":2,"./DocumentDOMSource":3,"./ElementFinder":4,"./EventDelegator":5,"./fromEvent":10,"./isolate":14,"./utils":21,"@cycle/xstream-adapter":22,"matches-selector":97,"xstream":123}],8:[function(require,module,exports){
+},{"./BodyDOMSource":2,"./DocumentDOMSource":3,"./ElementFinder":4,"./EventDelegator":5,"./fromEvent":10,"./isolate":14,"./utils":21,"@cycle/xstream-adapter":22,"matches-selector":97,"xstream":124}],8:[function(require,module,exports){
 "use strict";
 var ScopeChecker = (function () {
     function ScopeChecker(scope, isolateModule) {
@@ -690,7 +690,7 @@ function fromEvent(element, eventName, useCapture) {
 }
 exports.fromEvent = fromEvent;
 
-},{"xstream":123}],11:[function(require,module,exports){
+},{"xstream":124}],11:[function(require,module,exports){
 "use strict";
 var hyperscript_1 = require('./hyperscript');
 function isValidString(param) {
@@ -1311,7 +1311,7 @@ function makeDOMDriver(container, options) {
 }
 exports.makeDOMDriver = makeDOMDriver;
 
-},{"./MainDOMSource":7,"./VNodeWrapper":9,"./isolateModule":15,"./modules":19,"./transposition":20,"./utils":21,"@cycle/xstream-adapter":22,"es6-map":66,"snabbdom":116,"xstream":123}],17:[function(require,module,exports){
+},{"./MainDOMSource":7,"./VNodeWrapper":9,"./isolateModule":15,"./modules":19,"./transposition":20,"./utils":21,"@cycle/xstream-adapter":22,"es6-map":66,"snabbdom":116,"xstream":124}],17:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var transposition_1 = require('./transposition');
@@ -1411,7 +1411,7 @@ function mockDOMSource(streamAdapter, mockConfig) {
 }
 exports.mockDOMSource = mockDOMSource;
 
-},{"@cycle/xstream-adapter":22,"xstream":123}],19:[function(require,module,exports){
+},{"@cycle/xstream-adapter":22,"xstream":124}],19:[function(require,module,exports){
 "use strict";
 var ClassModule = require('snabbdom/modules/class');
 exports.ClassModule = ClassModule;
@@ -1480,7 +1480,7 @@ function makeTransposeVNode(runStreamAdapter) {
 }
 exports.makeTransposeVNode = makeTransposeVNode;
 
-},{"@cycle/xstream-adapter":22,"xstream":123}],21:[function(require,module,exports){
+},{"@cycle/xstream-adapter":22,"xstream":124}],21:[function(require,module,exports){
 "use strict";
 function isElement(obj) {
     return typeof HTMLElement === "object" ?
@@ -1562,7 +1562,7 @@ var XStreamAdapter = {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = XStreamAdapter;
 
-},{"xstream":123}],23:[function(require,module,exports){
+},{"xstream":124}],23:[function(require,module,exports){
 "use strict";
 var base_1 = require('@cycle/base');
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
@@ -8357,18 +8357,167 @@ exports.default = Stream;
 
 },{"symbol-observable":119}],123:[function(require,module,exports){
 "use strict";
+var core_1 = require('../core');
+var DOMEventProducer = (function () {
+    function DOMEventProducer(node, eventType, useCapture) {
+        this.node = node;
+        this.eventType = eventType;
+        this.useCapture = useCapture;
+        this.type = 'fromEvent';
+    }
+    DOMEventProducer.prototype._start = function (out) {
+        this.listener = function (e) { return out._n(e); };
+        this.node.addEventListener(this.eventType, this.listener, this.useCapture);
+    };
+    DOMEventProducer.prototype._stop = function () {
+        this.node.removeEventListener(this.eventType, this.listener, this.useCapture);
+        this.listener = null;
+    };
+    return DOMEventProducer;
+}());
+exports.DOMEventProducer = DOMEventProducer;
+var NodeEventProducer = (function () {
+    function NodeEventProducer(node, eventName) {
+        this.node = node;
+        this.eventName = eventName;
+        this.type = 'fromEvent';
+    }
+    NodeEventProducer.prototype._start = function (out) {
+        this.listener = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return (args.length > 1) ? out._n(args) : out._n(args[0]);
+        };
+        this.node.addListener(this.eventName, this.listener);
+    };
+    NodeEventProducer.prototype._stop = function () {
+        this.node.removeListener(this.eventName, this.listener);
+        this.listener = null;
+    };
+    return NodeEventProducer;
+}());
+exports.NodeEventProducer = NodeEventProducer;
+function isEmitter(element) {
+    return element.emit && element.addListener;
+}
+/**
+ * Creates a stream based on either:
+ * - DOM events with the name `eventName` from a provided target node
+ * - Events with the name `eventName` from a provided NodeJS EventEmitter
+ *
+ * When creating a stream from EventEmitters, if the source event has more than
+ * one argument all the arguments will be aggregated into an array in the
+ * result stream.
+ *
+ * Marble diagram:
+ *
+ * ```text
+ *   fromEvent(element, eventName)
+ * ---ev--ev----ev---------------
+ * ```
+ *
+ * Examples:
+ *
+ * ```js
+ * import fromEvent from 'xstream/extra/fromEvent'
+ *
+ * const stream = fromEvent(document.querySelector('.button'), 'click')
+ *   .mapTo('Button clicked!')
+ *
+ * stream.addListener({
+ *   next: i => console.log(i),
+ *   error: err => console.error(err),
+ *   complete: () => console.log('completed')
+ * })
+ * ```
+ *
+ * ```text
+ * > 'Button clicked!'
+ * > 'Button clicked!'
+ * > 'Button clicked!'
+ * ```
+ *
+ * ```js
+ * import fromEvent from 'xstream/extra/fromEvent'
+ * import {EventEmitter} from 'events'
+ *
+ * const MyEmitter = new EventEmitter()
+ * const stream = fromEvent(MyEmitter, 'foo')
+ *
+ * stream.addListener({
+ *   next: i => console.log(i),
+ *   error: err => console.error(err),
+ *   complete: () => console.log('completed')
+ * })
+ *
+ * MyEmitter.emit('foo', 'bar')
+ * ```
+ *
+ * ```text
+ * > 'bar'
+ * ```
+ *
+ * ```js
+ * import fromEvent from 'xstream/extra/fromEvent'
+ * import {EventEmitter} from 'events'
+ *
+ * const MyEmitter = new EventEmitter()
+ * const stream = fromEvent(MyEmitter, 'foo')
+ *
+ * stream.addListener({
+ *   next: i => console.log(i),
+ *   error: err => console.error(err),
+ *   complete: () => console.log('completed')
+ * })
+ *
+ * MyEmitter.emit('foo', 'bar', 'baz', 'buzz')
+ * ```
+ *
+ * ```text
+ * > ['bar', 'baz', 'buzz']
+ * ```
+ *
+ * @param {EventTarget|EventEmitter} element The element upon which to listen.
+ * @param {string} eventName The name of the event for which to listen.
+ * @param {boolean?} useCapture An optional boolean that indicates that events of
+ * this type will be dispatched to the registered listener before being
+ * dispatched to any EventTarget beneath it in the DOM tree. Defaults to false.
+ * @return {Stream}
+ */
+function fromEvent(element, eventName, useCapture) {
+    if (useCapture === void 0) { useCapture = false; }
+    if (isEmitter(element)) {
+        return new core_1.Stream(new NodeEventProducer(element, eventName));
+    }
+    else {
+        return new core_1.Stream(new DOMEventProducer(element, eventName, useCapture));
+    }
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fromEvent;
+
+},{"../core":122}],124:[function(require,module,exports){
+"use strict";
 var core_1 = require('./core');
 exports.Stream = core_1.Stream;
 exports.MemoryStream = core_1.MemoryStream;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = core_1.Stream;
 
-},{"./core":122}],124:[function(require,module,exports){
+},{"./core":122}],125:[function(require,module,exports){
 'use strict';
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _xstream = require('xstream');
 
 var _xstream2 = _interopRequireDefault(_xstream);
+
+var _fromEvent = require('xstream/extra/fromEvent');
+
+var _fromEvent2 = _interopRequireDefault(_fromEvent);
 
 var _xstreamRun = require('@cycle/xstream-run');
 
@@ -8392,37 +8541,63 @@ function selectAcronym(accuracy) {
   return potentialAcronyms[Math.round(accuracy * (potentialAcronyms.length - 1))];
 }
 
-function intent(domSource) {
+function createEmail(description) {
+  if (description) {
+    return (0, _dom.div)([(0, _dom.pre)(description), (0, _dom.a)({ attrs: { href: encodeURI('mailto:info@hsimosoftware.com?subject=A project&body=' + description) } }, 'Send this email')]);
+  } else {
+    return (0, _dom.div)([(0, _dom.pre)('Please start typing...')]);
+  }
+}
+
+function intent(domSource, keypress) {
   var fullName = domSource.select('.name');
   var revealAcronym$ = _xstream2.default.merge(fullName.events('mousemove').map(closeToCenter), fullName.events('touchstart').mapTo(1.0), fullName.events('mouseout').mapTo(0.0), fullName.events('touchend').mapTo(0.0)).startWith(0.0);
 
   return {
-    revealAcronym$: revealAcronym$
+    revealAcronym$: revealAcronym$,
+    showDescription$: keypress.mapTo(1).fold(function (acc, x) {
+      return acc + x;
+    }, 0)
   };
 }
 
 function model(actions) {
   var acronym$ = actions.revealAcronym$.map(selectAcronym);
+  var description$ = actions.showDescription$.map(function (chars) {
+    return 'Greetings to the fine folk at HSIMO Software,\n\nI understand that you\'re picky about the\nprojects you work on, but I have one that\nI think you might find interesting.\n\nHere are a few of the details:'.slice(0, chars);
+  });
 
-  return acronym$.map(function (a) {
+  return _xstream2.default.combine(acronym$, description$).map(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        a = _ref2[0],
+        d = _ref2[1];
+
     return {
-      acronym: a
+      acronym: a,
+      description: d
     };
   });
 }
 
 function view(state$) {
-  return state$.map(function (_ref) {
-    var name = _ref.name,
-        acronym = _ref.acronym;
-    return (0, _dom.header)([(0, _dom.h1)([(0, _dom.abbr)('.name', { attrs: { title: acronym } }, 'HSIMO'), ' Software, LLC']), (0, _dom.h2)(acronym)]);
+  return state$.map(function (_ref3) {
+    var acronym = _ref3.acronym,
+        description = _ref3.description;
+    return (0, _dom.div)([(0, _dom.header)([(0, _dom.h1)([(0, _dom.abbr)('.name', { attrs: { title: acronym } }, 'HSIMO'), ' Software, LLC']), (0, _dom.h2)(acronym)]), (0, _dom.hr)(), createEmail(description)]);
   });
 }
 
 function main(sources) {
-  return { DOM: view(model(intent(sources.DOM))) };
+  return { DOM: view(model(intent(sources.DOM, sources.Keypress))) };
 }
 
-(0, _xstreamRun.run)(main, { DOM: (0, _dom.makeDOMDriver)('#experiment') });
+(0, _xstreamRun.run)(main, {
+  DOM: (0, _dom.makeDOMDriver)('#experiment'),
+  Keypress: function Keypress() {
+    return (0, _fromEvent2.default)(document, 'keypress').map(function (ev) {
+      return ev.key;
+    });
+  }
+});
 
-},{"@cycle/dom":13,"@cycle/xstream-run":23,"xstream":123}]},{},[124]);
+},{"@cycle/dom":13,"@cycle/xstream-run":23,"xstream":124,"xstream/extra/fromEvent":123}]},{},[125]);
