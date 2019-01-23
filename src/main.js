@@ -65,7 +65,8 @@ projects you work on, but I have one that
 I think you might find interesting.
 
 Here are a few of the details:`
-.slice(0, chars));
+// If it's a mobile device, they won't be able to type, so use the whole string.
+.slice(0, navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i) ? undefined : chars));
 
   return xs.combine(acronym$, description$).map(([a, d]) => {
     return {

@@ -8564,7 +8564,9 @@ function intent(domSource, keypress) {
 function model(actions) {
   var acronym$ = actions.revealAcronym$.map(selectAcronym);
   var description$ = actions.showDescription$.map(function (chars) {
-    return 'Greetings to the fine folk at HSIMO Software,\n\nI understand that you\'re picky about the\nprojects you work on, but I have one that\nI think you might find interesting.\n\nHere are a few of the details:'.slice(0, chars);
+    return 'Greetings to the fine folk at HSIMO Software,\n\nI understand that you\'re picky about the\nprojects you work on, but I have one that\nI think you might find interesting.\n\nHere are a few of the details:'
+    // If it's a mobile device, they won't be able to type, so use the whole string.
+    .slice(0, navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i) ? undefined : chars);
   });
 
   return _xstream2.default.combine(acronym$, description$).map(function (_ref) {
