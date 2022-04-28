@@ -8585,7 +8585,7 @@ function view(state$) {
   return state$.map(function (_ref3) {
     var acronym = _ref3.acronym,
         description = _ref3.description;
-    return (0, _dom.div)([(0, _dom.header)([(0, _dom.h1)([(0, _dom.abbr)('.name', { attrs: { title: acronym } }, 'HSIMO'), ' Software, LLC']), (0, _dom.h2)(acronym)]), (0, _dom.hr)(), createEmail(description)]);
+    return (0, _dom.div)([(0, _dom.header)([(0, _dom.h1)([(0, _dom.abbr)('.name', { attrs: { title: acronym } }, 'HSIMO'), ' Software']), (0, _dom.h2)(acronym)]), (0, _dom.hr)(), createEmail(description)]);
   });
 }
 
